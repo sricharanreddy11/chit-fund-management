@@ -1,11 +1,11 @@
-from django.urls import path
-from .views import GroupListCreateView, SchemeListCreateView, GroupSchemeListCreateView, PaymentListCreateView, WithdrawalListCreateView
+from rest_framework.routers import DefaultRouter
+from .views import GroupViewSet, SchemeViewSet, GroupSchemeViewSet, PaymentViewSet, WithdrawalViewSet
 
+router = DefaultRouter()
+router.register(r'groups', GroupViewSet)
+router.register(r'schemes', SchemeViewSet)
+router.register(r'group-schemes', GroupSchemeViewSet)
+router.register(r'payments', PaymentViewSet)
+router.register(r'withdrawals', WithdrawalViewSet)
 
-urlpatterns = [
-    path('groups/', GroupListCreateView.as_view(), name='group-list-create'),
-    path('schemes/', SchemeListCreateView.as_view(), name='scheme-list-create'),
-    path('group-schemes/', GroupSchemeListCreateView.as_view(), name='group-scheme-list-create'),
-    path('payments/', PaymentListCreateView.as_view(), name='payment-list-create'),
-    path('withdrawals/', WithdrawalListCreateView.as_view(), name='withdrawal-list-create'),
-]
+urlpatterns = router.urls

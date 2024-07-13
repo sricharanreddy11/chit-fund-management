@@ -1,28 +1,36 @@
-from rest_framework import generics
+from rest_framework.mixins import ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin, \
+    DestroyModelMixin
+from rest_framework.viewsets import GenericViewSet
 from .models import Group, Scheme, GroupScheme, Payment, Withdrawal
-from .serializers import GroupSerializer, SchemeSerializer, GroupSchemeSerializer, PaymentSerializer, WithdrawalSerializer
+from .serializers import GroupListSerializer, SchemeListSerializer, GroupSchemeSerializer, PaymentListSerializer, \
+    WithdrawalListSerializer
 
 
-class GroupListCreateView(generics.ListCreateAPIView):
+class GroupViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,
+                   DestroyModelMixin):
     queryset = Group.objects.all()
-    serializer_class = GroupSerializer
+    serializer_class = GroupListSerializer
 
 
-class SchemeListCreateView(generics.ListCreateAPIView):
+class SchemeViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,
+                    DestroyModelMixin):
     queryset = Scheme.objects.all()
-    serializer_class = SchemeSerializer
+    serializer_class = SchemeListSerializer
 
 
-class GroupSchemeListCreateView(generics.ListCreateAPIView):
+class GroupSchemeViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,
+                         DestroyModelMixin):
     queryset = GroupScheme.objects.all()
     serializer_class = GroupSchemeSerializer
 
 
-class PaymentListCreateView(generics.ListCreateAPIView):
+class PaymentViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,
+                     DestroyModelMixin):
     queryset = Payment.objects.all()
-    serializer_class = PaymentSerializer
-    
+    serializer_class = PaymentListSerializer
 
-class WithdrawalListCreateView(generics.ListCreateAPIView):
+
+class WithdrawalViewSet(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,
+                        DestroyModelMixin):
     queryset = Withdrawal.objects.all()
-    serializer_class = WithdrawalSerializer
+    serializer_class = WithdrawalListSerializer

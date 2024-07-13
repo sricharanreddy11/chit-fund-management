@@ -2,13 +2,25 @@ from rest_framework import serializers
 from .models import Group, Scheme, GroupScheme, Payment, Withdrawal
 
 
-class GroupSerializer(serializers.ModelSerializer):
+class GroupListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Group
         fields = '__all__'
 
 
-class SchemeSerializer(serializers.ModelSerializer):
+class GroupDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = '__all__'
+
+
+class SchemeListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Scheme
+        fields = '__all__'
+
+
+class SchemeDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Scheme
         fields = '__all__'
@@ -20,13 +32,25 @@ class GroupSchemeSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 
-class PaymentSerializer(serializers.ModelSerializer):
+class PaymentListSerializer(serializers.ModelSerializer):
     class Meta:
         model = Payment
         fields = '__all__'
 
 
-class WithdrawalSerializer(serializers.ModelSerializer):
+class PaymentDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Payment
+        fields = '__all__'
+
+
+class WithdrawalListSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Withdrawal
+        fields = '__all__'
+
+
+class WithdrawalDetailSerializer(serializers.ModelSerializer):
     class Meta:
         model = Withdrawal
         fields = '__all__'
