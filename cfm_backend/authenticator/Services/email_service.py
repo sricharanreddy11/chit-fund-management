@@ -115,14 +115,6 @@ class EmailService(CommunicationChannel):
                 'password': 'umtquekarfsoaudi',
                 'from_mail': 'noreply.alertabandonedbag@gmail.com'
             },
-            {
-                'server': 'smtp.office365.com',
-                'port': 587,
-                'username': 'sam@thriwin.io',
-                'password': 'nwjhrsmfbvzzldkw',
-                'from_mail': 'sam@thriwin.io'
-
-            }
         ]
         for email in emails_conf_dict:
             if email.get('from_mail') == mail:
