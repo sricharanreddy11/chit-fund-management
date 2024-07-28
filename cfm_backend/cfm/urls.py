@@ -18,9 +18,11 @@ from django.contrib import admin
 from django.urls import path, include
 
 from authenticator import urls as auth_urls
+from cfm.views import home
 from chit_fund import urls as chit_urls
 
 urlpatterns = [
+    path('', home),
     path('admin/', admin.site.urls),
     path('auth/', include(auth_urls)),
     path('cfm/', include(chit_urls)),
