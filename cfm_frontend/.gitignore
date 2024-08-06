@@ -42,4 +42,4 @@ testem.log
 Thumbs.db
 
 #Backend Files
-/cfm_backend/s
+../cfm_backend/

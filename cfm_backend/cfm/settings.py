@@ -84,7 +84,6 @@ WSGI_APPLICATION = 'cfm.wsgi.application'
 
 
 CORS_ALLOW_ALL_ORIGINS = True
-cors
 CSRF_TRUSTED_ORIGINS = [
     'http://localhost:4200',
 ]
