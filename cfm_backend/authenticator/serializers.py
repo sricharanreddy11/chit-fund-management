@@ -26,8 +26,11 @@ class UserCreateSerializer(serializers.ModelSerializer):
         # Set a default password if none is provided
         if 'password' not in validated_data or not validated_data['password']:
             validated_data['password'] = User.objects.make_random_password()
+        try:
 
-        user = User.objects.create_user(**validated_data)
+            user = User.objects.create_user(**validated_data)
+        except Exception as e:
+            return "User Already Exists"
 
         if groups:
             user.groups.set(groups)
