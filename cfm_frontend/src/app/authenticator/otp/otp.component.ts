@@ -4,20 +4,23 @@ import { Router, RouterLink } from '@angular/router';
 import { OtpResponse } from '../authenticator.model';
 import { AuthenticatorService } from '../authenticator.service';
 import { NgFor } from '@angular/common';
+import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: 'app-otp',
   templateUrl: './otp.component.html',
-  imports: [FormsModule, ReactiveFormsModule, RouterLink, NgFor],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, NgFor, LoadingSpinnerComponent],
   standalone: true,
   styleUrl: './otp.component.css'
 })
 export class OtpComponent {
   data: OtpResponse | null = this.authService.otpRequestResponse;
+  message: string = '';
   otpForm!: FormGroup;
   otpControls = ['digit1', 'digit2', 'digit3', 'digit4', 'digit5', 'digit6'];
+  isLoading = false;
 
-  constructor(private fb: FormBuilder, private authService: AuthenticatorService) {}
+  constructor(private fb: FormBuilder, private router: Router, private authService: AuthenticatorService) {}
 
   ngOnInit(): void {
     this.otpForm = this.fb.group({
@@ -105,11 +108,23 @@ export class OtpComponent {
       this.authService.verifyOtp(request_id, otp).subscribe(
         (requestData) =>{
           console.log(requestData);
-          this.authService.accesstoken = requestData.access_token;
-          this.authService.refreshtoken = requestData.refresh_token;
-          this.authService.isAuthenticated = true;
+          this.isLoading = true;
+          this.authService.loginUser(
+            requestData.access,
+            requestData.refresh
+          )
+          this.router.navigate(['/cfm/dashboard']);
+          this.isLoading = false;
+        },
+        error => {
+          console.log(error.error);
+          this.message = error.error;
         }
       )
     }
+  }
+
+  closeMessage(){
+    this.message = ''
   }
 }

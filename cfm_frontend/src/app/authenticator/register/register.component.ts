@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthenticatorService } from '../authenticator.service';
+import { last } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -12,20 +13,38 @@ import { AuthenticatorService } from '../authenticator.service';
 })
 export class RegisterComponent {
   registerForm!: FormGroup;
-  errorMessage: string = '';
+  message: string = '';
 
   constructor(private authService: AuthenticatorService) {
     this.registerForm = new FormGroup({
-      full_name: new FormControl('',[Validators.required]),
-      email_mobile: new FormControl('', [Validators.required, Validators.email]),
+      first_name: new FormControl('',[Validators.required]),
+      last_name: new FormControl(''),
+      email: new FormControl('', [Validators.required, Validators.email]),
     });
   }
 
   onSubmit() {
     if (this.registerForm.invalid) {
-      this.errorMessage = 'Please enter a valid details.';
+      this.message = 'Please enter a valid details.';
       return;
     }
-    console.log(this.registerForm)
-}
+    const email = this.registerForm.value.email;
+    const first_name = this.registerForm.value.first_name;
+    const last_name = this.registerForm.value.last_name;
+    this.authService.registerUser(first_name,last_name,email).subscribe(
+      (requestData) => {
+        console.log(requestData);
+        this.message = 'User registered Sucessfully';
+
+      },
+      error => {
+        console.log(error.error);
+        this.message = error.error;
+      }
+    );
+  }
+
+  closeMessage(){
+    this.message = ''
+  }
 }

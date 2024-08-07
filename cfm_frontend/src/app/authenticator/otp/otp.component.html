@@ -1,9 +1,21 @@
+@if(isLoading === true){
+    <app-loading-spinner/>
+  }
+@else{
 <div class="max-w-lg mx-auto text-center bg-white px-4 sm:px-8 py-10 rounded-xl shadow">
     <header class="mb-8">
         <h1 class="text-2xl font-bold mb-1">OTP Verification</h1>
         <p class="text-[15px] text-slate-500">{{data?.message}}</p>
     </header>
     <form [formGroup]="otpForm" (ngSubmit)="onSubmit()">
+        @if(message){
+            <div class="bg-blue-100 border border-blue-400 text-blue-700 px-4 py-3 mb-2 rounded relative" role="alert">
+              <strong class="font-bold">{{message}}!</strong>
+              <span class="absolute top-0 bottom-0 right-0 px-4 py-3">
+                <svg (click)="closeMessage()" class="fill-current h-6 w-6 text-blue-500" role="button" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20"><title>Close</title><path d="M14.348 14.849a1.2 1.2 0 0 1-1.697 0L10 11.819l-2.651 3.029a1.2 1.2 0 1 1-1.697-1.697l2.758-3.15-2.759-3.152a1.2 1.2 0 1 1 1.697-1.697L10 8.183l2.651-3.031a1.2 1.2 0 1 1 1.697 1.697l-2.758 3.152 2.758 3.15a1.2 1.2 0 0 1 0 1.698z"/></svg>
+              </span>
+            </div>
+          }
         <div class="flex items-center justify-center gap-2 sm:gap-3">
             <input
                 *ngFor="let control of otpControls; let i = index"
@@ -24,3 +36,4 @@
     </form>
     <div class="text-sm text-slate-500 mt-4">Didn't receive code? <a class="font-medium text-indigo-500 hover:text-indigo-600" href="#0">Resend</a></div>
 </div>
+}

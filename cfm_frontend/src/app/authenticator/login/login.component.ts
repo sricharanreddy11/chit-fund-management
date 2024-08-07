@@ -1,20 +1,21 @@
-import { NgFor, NgIf } from '@angular/common';
 import { Component } from '@angular/core';
 import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthenticatorService } from '../authenticator.service';
 import { Router, RouterLink } from '@angular/router';
+import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-spinner.component";
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [FormsModule, ReactiveFormsModule, RouterLink],
+  imports: [FormsModule, ReactiveFormsModule, RouterLink, LoadingSpinnerComponent],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css'
 })
 export class LoginComponent {
 
   loginForm!: FormGroup;
-  errorMessage: string = '';
+  message: string = '';
+  isLoading: boolean = false;
 
   constructor(private authService: AuthenticatorService, private router: Router) {
     this.loginForm = new FormGroup({
@@ -24,10 +25,11 @@ export class LoginComponent {
 
   onSubmit() {
     if (this.loginForm.invalid) {
-      this.errorMessage = 'Please enter a valid email.';
+      this.message = 'Please enter a valid email.';
       return;
     }
     
+    this.isLoading = true;
     const email = this.loginForm.value.email_mobile;
     this.authService.sendOtp(email).subscribe(
       (requestData) => {
@@ -39,17 +41,17 @@ export class LoginComponent {
           valid_for: requestData.valid_for, 
           resend_after: requestData.resend_after
         }
-        this.errorMessage = '';
+        this.message = '';
 
       },
       error => {
         console.log(error.error);
-        this.errorMessage = error.error;
+        this.message = error.error;
       }
     );
   }
 
-  closeError(){
-    this.errorMessage = ''
+  closeMessage(){
+    this.message = ''
   }
 }
