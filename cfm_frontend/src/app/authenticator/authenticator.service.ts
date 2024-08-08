@@ -13,16 +13,21 @@ export class AuthenticatorService {
   private httpClient = inject(HttpClient);
   private cookieService = inject(CookieService)
   otpRequestResponse!: OtpResponse;
-  isAuthenticated: boolean = false;
+  otpSent: boolean = false;
+  private cookiePath = '/';
+
+  isLoggedIn(): boolean {
+    return this.cookieService.get('is_authenticated') === 'true';
+  }
 
 
-registerUser(first_name: string, last_name: string, email: string): Observable<any> {
-    return this.httpClient.post(this.apiUrl + 'auth/user/register/', {
-        first_name: first_name,
-        last_name: last_name,
-        email: email
-    });
-}
+  registerUser(first_name: string, last_name: string, email: string): Observable<any> {
+      return this.httpClient.post(this.apiUrl + 'auth/user/register/', {
+          first_name: first_name,
+          last_name: last_name,
+          email: email
+      });
+  }
 
   sendOtp(email_mobile: string) : Observable<any> {
     return this.httpClient.post(this.apiUrl + 'auth/login-otp/request-new/', {
@@ -38,11 +43,12 @@ registerUser(first_name: string, last_name: string, email: string): Observable<a
   }
 
   private setSession(access_token: string){
-    let expiresAt = new Date(new Date().getTime() + (600 * 1000));
-
-    localStorage.setItem('expires_at', expiresAt.toISOString());
-    localStorage.setItem('access_token', access_token);
-    localStorage.setItem('is_authenticated', "true")
+    const expiresAt = new Date(new Date().getTime() + (600 * 1000)).toISOString();
+      const cookieOptions = { path: this.cookiePath };
+      
+      this.cookieService.set('expires_at', expiresAt, cookieOptions);
+      this.cookieService.set('access_token', access_token, cookieOptions);
+      this.cookieService.set('is_authenticated', 'true', cookieOptions);
   }
 
   getExpiration(): string | null {
@@ -51,13 +57,11 @@ registerUser(first_name: string, last_name: string, email: string): Observable<a
 
   loginUser(access_token: string, refresh_token: string) {
     this.setSession(access_token);
-    this.isAuthenticated = true;
   }
 
-  logout(){
-    this.isAuthenticated = false
-    localStorage.getItem('expires_at')
-    localStorage.getItem('access_token')
-    localStorage.setItem('is_authenticated', "false")
+  logout(){      
+      this.cookieService.deleteAll(this.cookiePath);
+      console.log('After logout:', this.cookieService.getAll());
   }
-}
+  }
+  

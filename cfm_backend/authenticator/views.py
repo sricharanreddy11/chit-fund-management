@@ -110,7 +110,7 @@ class LogOutAPI(APIView):
             from django.contrib.auth.models import AnonymousUser
             request.user = AnonymousUser()
 
-        return Response({"Message": "User Logged Out Successfully"})
+        return Response({"message": "User Logged Out Successfully"})
 
 
 class UsersAPI(GenericViewSet, ListModelMixin, CreateModelMixin, RetrieveModelMixin, UpdateModelMixin,

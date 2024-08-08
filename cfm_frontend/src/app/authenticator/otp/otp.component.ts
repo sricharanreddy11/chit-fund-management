@@ -1,10 +1,11 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { OtpResponse } from '../authenticator.model';
 import { AuthenticatorService } from '../authenticator.service';
 import { NgFor } from '@angular/common';
 import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-spinner.component";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-otp',
@@ -13,12 +14,13 @@ import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-sp
   standalone: true,
   styleUrl: './otp.component.css'
 })
-export class OtpComponent {
+export class OtpComponent implements OnInit, OnDestroy {
   data: OtpResponse | null = this.authService.otpRequestResponse;
   message: string = '';
   otpForm!: FormGroup;
   otpControls = ['digit1', 'digit2', 'digit3', 'digit4', 'digit5', 'digit6'];
   isLoading = false;
+  private authSubscribe: Subscription | undefined;
 
   constructor(private fb: FormBuilder, private router: Router, private authService: AuthenticatorService) {}
 
@@ -105,7 +107,7 @@ export class OtpComponent {
         otp += otpDigits[element]
       });
       let request_id = this.authService.otpRequestResponse.request_id;
-      this.authService.verifyOtp(request_id, otp).subscribe(
+      this.authSubscribe = this.authService.verifyOtp(request_id, otp).subscribe(
         (requestData) =>{
           console.log(requestData);
           this.isLoading = true;
@@ -113,6 +115,7 @@ export class OtpComponent {
             requestData.access,
             requestData.refresh
           )
+          this.authService.otpSent = false;
           this.router.navigate(['/cfm/dashboard']);
           this.isLoading = false;
         },
@@ -126,5 +129,9 @@ export class OtpComponent {
 
   closeMessage(){
     this.message = ''
+  }
+
+  ngOnDestroy(){
+    this.authSubscribe?.unsubscribe()
   }
 }

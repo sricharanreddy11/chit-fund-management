@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { AuthenticatorService } from '../authenticator.service';
-import { last } from 'rxjs';
+import { last, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-register',
@@ -14,6 +14,7 @@ import { last } from 'rxjs';
 export class RegisterComponent {
   registerForm!: FormGroup;
   message: string = '';
+  private authSubscribe: Subscription | undefined;
 
   constructor(private authService: AuthenticatorService) {
     this.registerForm = new FormGroup({
@@ -31,7 +32,7 @@ export class RegisterComponent {
     const email = this.registerForm.value.email;
     const first_name = this.registerForm.value.first_name;
     const last_name = this.registerForm.value.last_name;
-    this.authService.registerUser(first_name,last_name,email).subscribe(
+    this.authSubscribe = this.authService.registerUser(first_name,last_name,email).subscribe(
       (requestData) => {
         console.log(requestData);
         this.message = 'User registered Sucessfully';
@@ -46,5 +47,9 @@ export class RegisterComponent {
 
   closeMessage(){
     this.message = ''
+  }
+
+  ngOnDestroy(){
+    this.authSubscribe?.unsubscribe()
   }
 }

@@ -10,12 +10,11 @@ export class AuthInterceptor implements HttpInterceptor {
     intercept(req: HttpRequest<any>,
         next: HttpHandler): Observable<HttpEvent<any>> {
 
-        const is_authenticated = this.cookieService.get("is_authenticated");
-        if (!Boolean(is_authenticated)) {
+        if (!(this.cookieService.get("is_authenticated") === 'true')) {
             return next.handle(req);
         }
 
-        const access_token = this.cookieService.get("id_token");
+        const access_token = this.cookieService.get("access_token");
 
         if (access_token) {
             const cloned = req.clone({

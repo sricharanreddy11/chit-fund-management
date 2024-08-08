@@ -3,6 +3,7 @@ import {FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } f
 import { AuthenticatorService } from '../authenticator.service';
 import { Router, RouterLink } from '@angular/router';
 import { LoadingSpinnerComponent } from "../../shared/loading-spinner/loading-spinner.component";
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -16,6 +17,7 @@ export class LoginComponent {
   loginForm!: FormGroup;
   message: string = '';
   isLoading: boolean = false;
+  private authSubscribe: Subscription | undefined;
 
   constructor(private authService: AuthenticatorService, private router: Router) {
     this.loginForm = new FormGroup({
@@ -31,10 +33,11 @@ export class LoginComponent {
     
     this.isLoading = true;
     const email = this.loginForm.value.email_mobile;
-    this.authService.sendOtp(email).subscribe(
+    this.authSubscribe = this.authService.sendOtp(email).subscribe(
       (requestData) => {
         console.log(requestData);
         this.router.navigate(['/auth/otp']);
+        this.authService.otpSent = true;
         this.authService.otpRequestResponse = { 
           message: requestData.message, 
           request_id: requestData.request_id, 
@@ -46,6 +49,7 @@ export class LoginComponent {
       },
       error => {
         console.log(error.error);
+        this.isLoading = false;
         this.message = error.error;
       }
     );
@@ -53,5 +57,9 @@ export class LoginComponent {
 
   closeMessage(){
     this.message = ''
+  }
+
+  ngOnDestroy(){
+    this.authSubscribe?.unsubscribe()
   }
 }
