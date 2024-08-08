@@ -15,7 +15,7 @@ import { Subscription } from 'rxjs';
   styleUrl: './otp.component.css'
 })
 export class OtpComponent implements OnInit, OnDestroy {
-  data: OtpResponse | null = this.authService.otpRequestResponse;
+  data: OtpResponse | null = this.authService.otpResponse;
   message: string = '';
   otpForm!: FormGroup;
   otpControls = ['digit1', 'digit2', 'digit3', 'digit4', 'digit5', 'digit6'];
@@ -106,7 +106,7 @@ export class OtpComponent implements OnInit, OnDestroy {
       this.otpControls.forEach(element => {
         otp += otpDigits[element]
       });
-      let request_id = this.authService.otpRequestResponse.request_id;
+      let request_id = this.authService.otpResponse.request_id;
       this.authSubscribe = this.authService.verifyOtp(request_id, otp).subscribe(
         (requestData) =>{
           console.log(requestData);

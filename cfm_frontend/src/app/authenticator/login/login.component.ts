@@ -38,7 +38,7 @@ export class LoginComponent {
         console.log(requestData);
         this.router.navigate(['/auth/otp']);
         this.authService.otpSent = true;
-        this.authService.otpRequestResponse = { 
+        this.authService.otpResponse = { 
           message: requestData.message, 
           request_id: requestData.request_id, 
           valid_for: requestData.valid_for, 

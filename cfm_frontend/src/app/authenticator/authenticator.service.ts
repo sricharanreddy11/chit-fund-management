@@ -1,9 +1,10 @@
 import { inject, Injectable } from "@angular/core";
 import { environment } from "../../environments/environment.development";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { Observable, tap } from "rxjs";
 import { OtpResponse } from "./authenticator.model";
 import { CookieService } from "ngx-cookie-service";
+import { JwtService } from "./jwt.service";
 
 
 @Injectable({providedIn: 'root'})
@@ -11,10 +12,12 @@ export class AuthenticatorService {
 
   apiUrl = environment.apiUrl;
   private httpClient = inject(HttpClient);
-  private cookieService = inject(CookieService)
-  otpRequestResponse!: OtpResponse;
-  otpSent: boolean = false;
+  private cookieService = inject(CookieService);
+  private jwtService = inject(JwtService)
   private cookiePath = '/';
+
+  otpResponse!: OtpResponse;
+  otpSent: boolean = false;
 
   isLoggedIn(): boolean {
     return this.cookieService.get('is_authenticated') === 'true';
@@ -42,14 +45,40 @@ export class AuthenticatorService {
     })
   }
 
-  private setSession(access_token: string){
-    const expiresAt = new Date(new Date().getTime() + (600 * 1000)).toISOString();
-      const cookieOptions = { path: this.cookiePath };
-      
-      this.cookieService.set('expires_at', expiresAt, cookieOptions);
-      this.cookieService.set('access_token', access_token, cookieOptions);
-      this.cookieService.set('is_authenticated', 'true', cookieOptions);
+  private setSession(access_token: string) {
+    const expirationDate = this.jwtService.getTokenExpirationDate(access_token);
+    const cookieOptions = { path: this.cookiePath };
+
+    this.cookieService.set('expires_at', expirationDate!.toISOString(), cookieOptions);
+    this.cookieService.set('access_token', access_token, cookieOptions);
+    this.cookieService.set('is_authenticated', 'true', cookieOptions);
   }
+
+  refreshToken(refresh_token: string): Observable<any> {
+    return this.httpClient.post(this.apiUrl + 'auth/token/refresh/', {
+      refresh_token: refresh_token,
+    }).pipe(
+      tap((response: any) => {
+        this.setSession(response.access_token);
+      })
+    );
+  }
+
+  checkTokenExpiry() {
+    const token = this.cookieService.get('access_token');
+    const refreshToken = this.cookieService.get('refresh_token');
+  
+    if (this.jwtService.isTokenExpired(token)) {
+      if (this.jwtService.isTokenExpired(refreshToken)) {
+        this.logout(); 
+      } else {
+        this.refreshToken(refreshToken).subscribe({
+          error: () => this.logout(), 
+        });
+      }
+    }
+  }
+  
 
   getExpiration(): string | null {
     return localStorage.getItem('expires_at');
@@ -62,6 +91,7 @@ export class AuthenticatorService {
   logout(){      
       this.cookieService.deleteAll(this.cookiePath);
       console.log('After logout:', this.cookieService.getAll());
+      console.log('User has been logged out.');
   }
   }
   

@@ -5,6 +5,7 @@ import { routes as cfmRoutes } from './cfm/cfm.routes';
 import { AuthenticatorComponent } from './authenticator/authenticator.component';
 import { AppGuard } from './app.guard';
 import { AuthGuard } from './authenticator/authenticator.guard';
+import { CfmComponent } from './cfm/cfm.component';
 
 export const routes: Routes = [
     {
@@ -20,6 +21,7 @@ export const routes: Routes = [
     },
     {
         path: 'cfm',
+        component: CfmComponent,
         children: cfmRoutes,
         canActivate: [AppGuard]
     },
