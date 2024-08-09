@@ -10,7 +10,15 @@ export class CfmService {
     apiUrl = environment.apiUrl;
     private httpClient = inject(HttpClient);
     
-    getGroups(): Observable<any>{
+    getGroupList(): Observable<any>{
         return this.httpClient.get(this.apiUrl + 'cfm/groups/');
+    }
+
+    getSchemeList(): Observable<any>{
+        return this.httpClient.get(this.apiUrl + 'cfm/schemes/');
+    }
+
+    getChitList(): Observable<any>{
+        return this.httpClient.get(this.apiUrl + 'cfm/group-schemes/');
     }
 }

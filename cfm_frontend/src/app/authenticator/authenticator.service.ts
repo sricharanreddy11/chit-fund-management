@@ -90,6 +90,7 @@ export class AuthenticatorService {
 
   logout(){      
       this.cookieService.deleteAll(this.cookiePath);
+      location.reload()
       console.log('After logout:', this.cookieService.getAll());
       console.log('User has been logged out.');
   }
