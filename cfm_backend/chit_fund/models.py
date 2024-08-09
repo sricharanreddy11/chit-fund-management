@@ -5,7 +5,6 @@ from authenticator.models import User
 class Group(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(blank=True, null=True)
-    members = models.ForeignKey(User, on_delete=models.SET_NULL, related_name='chit_fund_groups', null=True, blank=True)
     group_owner = models.CharField(max_length=255,null=True, blank=True)
 
     def __str__(self):
@@ -30,6 +29,7 @@ class Scheme(models.Model):
 
 
 class GroupScheme(models.Model):
+    name = models.CharField(max_length=255,null=True, blank=True)
     group = models.ForeignKey(Group, on_delete=models.CASCADE, related_name='group_schemes')
     scheme = models.ForeignKey(Scheme, on_delete=models.CASCADE, related_name='group_schemes')
     current_total_amount = models.DecimalField(max_digits=10, decimal_places=2)
@@ -60,6 +60,7 @@ class Withdrawal(models.Model):
     amount = models.DecimalField(max_digits=10, decimal_places=2)
     date = models.DateField(auto_now_add=True)
     current_month = models.IntegerField(default=0, null=True, blank=True)
+
     class Meta:
         db_table = 'withdrawals'
 
